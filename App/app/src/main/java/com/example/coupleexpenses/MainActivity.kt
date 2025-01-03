@@ -1,7 +1,6 @@
 package com.example.coupleexpenses
 
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,18 +16,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.coupleexpenses.ui.theme.CoupleExpensesTheme
-import androidx.compose.material3.Text as Text1
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.KeyboardType
 
 
 class MainActivity : ComponentActivity() {
@@ -45,8 +41,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    var name by remember { mutableStateOf("") }
-    var greetingMessage by remember { mutableStateOf("") }
+    var sueldo_persona_A by remember { mutableStateOf("") }
+    var sueldo_persona_B by remember { mutableStateOf("") }
+    var monto_a_pagar by remember { mutableStateOf("") }
+    var resultado by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -56,23 +54,76 @@ fun MainScreen() {
                     .padding(innerPadding)
                     .padding(16.dp)
             ) {
+                // Sueldo persona A
                 TextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text1("Enter your name") },
-                    modifier = Modifier.fillMaxWidth()
+                    value = sueldo_persona_A,
+                    onValueChange = {
+                        if (it.isEmpty() || it.matches(Regex("^\\d*(\\.\\d*)?$"))) {
+                            sueldo_persona_A = it
+                        }
+                    },
+                    label = { Text("Sueldo de la persona A: ") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = { greetingMessage = "Hello $name!" }) {
+                // Sueldo persona B
+                TextField(
+                    value = sueldo_persona_B,
+                    onValueChange = {
+                        if (it.isEmpty() || it.matches(Regex("^\\d*(\\.\\d*)?$"))) {
+                            sueldo_persona_B = it
+                        }
+                    },
+                    label = { Text("Sueldo de la persona B: ") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Monto a pagar
+                TextField(
+                    value = monto_a_pagar,
+                    onValueChange = {
+                        if (it.isEmpty() || it.matches(Regex("^\\d*(\\.\\d*)?$"))) {
+                            monto_a_pagar = it
+                        }
+                    },
+                    label = { Text("Monto a pagar: ") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Resultado
+                Button(onClick = {
+                    val sueldoA = sueldo_persona_A.toDoubleOrNull()
+                    val sueldoB = sueldo_persona_B.toDoubleOrNull()
+                    val monto = monto_a_pagar.toDoubleOrNull()
+                    resultado = if (sueldoA != null && sueldoB != null && monto != null) {
+                        "El sueldo A es : $sueldoA" +
+                                "\nEl sueldo B es : $sueldoB" +
+                                "\nEl monto es : $monto"
+
+                    } else {
+                        "Por favor, ingresa bien los datos."
+                    }
+                }) {
                     Text("Enter")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (greetingMessage.isNotEmpty()) {
+                if (resultado.isNotEmpty()) {
                     Text(
-                        text = greetingMessage,
+                        text = resultado,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
