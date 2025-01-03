@@ -25,6 +25,8 @@ import com.example.coupleexpenses.ui.theme.CoupleExpensesTheme
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.ui.text.input.KeyboardType
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -108,10 +110,23 @@ fun MainScreen() {
                     val sueldoB = sueldo_persona_B.toDoubleOrNull()
                     val monto = monto_a_pagar.toDoubleOrNull()
                     resultado = if (sueldoA != null && sueldoB != null && monto != null) {
-                        "El sueldo A es : $sueldoA" +
-                                "\nEl sueldo B es : $sueldoB" +
-                                "\nEl monto es : $monto"
+                        val totalSueldos = sueldoA + sueldoB
+                        val porcentaje = monto / totalSueldos
+                        val pagoPersonaA = sueldoA * porcentaje
+                        val pagoPersonaB = sueldoB * porcentaje
 
+                        // Formatear los montos
+                        val formatter = NumberFormat.getCurrencyInstance(Locale("es", "CO"))
+                        val pagoAFormateado = formatter.format(pagoPersonaA)
+                        val pagoBFormateado = formatter.format(pagoPersonaB)
+                        val montoFormateado = formatter.format(monto)
+
+                        """
+                            Total a pagar: $montoFormateado
+                            Porcentaje del sueldo a pagar: ${(porcentaje * 100).toInt()}%
+                            Persona A debe pagar: $pagoAFormateado
+                            Persona B debe pagar: $pagoBFormateado                            
+                        """.trimIndent()
                     } else {
                         "Por favor, ingresa bien los datos."
                     }
